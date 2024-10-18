@@ -66,6 +66,9 @@ dependencies {
     implementation(libs.androidx.room.ktx) // KTX версия Room для удобства использования
     implementation ("androidx.core:core-ktx:1.13.1")
 
+    // PdfRenderer
+    implementation ("androidx.core:core-ktx:1.12.0")
+
 
     // Тестирование
     testImplementation(libs.junit)  // JUnit для юнит-тестирования
