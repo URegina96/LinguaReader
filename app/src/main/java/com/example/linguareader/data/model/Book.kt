@@ -1,4 +1,7 @@
 package com.example.linguareader.data.model
 
-class Book {
-}
+data class Book(
+    val id: String,
+    val title: String,
+    val content: String
+)

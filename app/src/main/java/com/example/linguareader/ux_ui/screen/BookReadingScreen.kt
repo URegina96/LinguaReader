@@ -1,5 +1,5 @@
 package com.example.linguareader.ux_ui.screen
-import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -9,8 +9,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -18,9 +18,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextLayoutResult
-import com.example.linguareader.R
-import com.example.linguareader.ui.theme.*
-import kotlinx.coroutines.launch
+import com.example.linguareader.ui.theme.HighlightColor
+import com.example.linguareader.ui.theme.TextPrimaryDark
 
 @Composable
 fun BookReadingScreen(
@@ -30,20 +29,16 @@ fun BookReadingScreen(
     var selectedWord by remember { mutableStateOf("") }
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
     val scrollState = rememberScrollState()
-    val coroutineScope = rememberCoroutineScope() // Create a coroutine scope
 
-    // Основная структура экрана
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Верхняя часть с длинным текстом
         Box(
             modifier = Modifier
                 .weight(1f)
                 .padding(16.dp)
                 .verticalScroll(scrollState)
         ) {
-            // Текст
             Text(
                 text = buildAnnotatedString {
                     longText.split(" ").forEach { word ->
@@ -51,9 +46,8 @@ fun BookReadingScreen(
                             SpanStyle(
                                 fontSize = 18.sp,
                                 fontWeight = if (word == selectedWord) FontWeight.Bold else FontWeight.Normal,
-                                background = if (word == selectedWord) MaterialTheme.colorScheme.background.copy(
-                                    alpha = 0.2f
-                                ) else MaterialTheme.colorScheme.background
+                                background = if (word == selectedWord) HighlightColor else Color.Transparent,
+                                color = if (word == selectedWord) TextPrimaryDark else MaterialTheme.colorScheme.primary
                             )
                         )
                         append("$word ")
@@ -69,7 +63,7 @@ fun BookReadingScreen(
                                     val word = getWordAtOffset(it, offset)
                                     if (word.isNotEmpty()) {
                                         selectedWord = word
-                                        onWordClicked(word) // Call onWordClicked with the selected word
+                                        onWordClicked(word)
                                     }
                                 }
                             }
@@ -81,25 +75,22 @@ fun BookReadingScreen(
             )
         }
 
-        // Нижняя часть с выбранным словом
         Box(
             modifier = Modifier
                 .padding(16.dp)
-                .height(50.dp)
-                .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f)),
+                .height(60.dp)
+                .background(if (selectedWord.isNotEmpty()) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = if (selectedWord.isNotEmpty()) "Выбранное слово: $selectedWord" else "Нажмите на слово",
-                fontSize = 20.sp,
-                color = MaterialTheme.colorScheme.primary,
+                fontSize = 22.sp,
+                color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
     }
 }
-
-// Функция для получения слова по координатам нажатия
 private fun getWordAtOffset(
     textLayoutResult: TextLayoutResult,
     offset: androidx.compose.ui.geometry.Offset
@@ -107,15 +98,15 @@ private fun getWordAtOffset(
     val layoutInput = textLayoutResult.layoutInput
     val text = layoutInput.text
     val start = textLayoutResult.getOffsetForPosition(offset)
-    val end = start
-    // Получаем слово на основе начального и конечного индексов
-    val words = text.split(" ")
     var currentIndex = 0
-    for (word in words) {
-        if (currentIndex <= start && currentIndex + word.length >= end) {
+
+    text.split(" ").forEach { word ->
+        if (currentIndex <= start && currentIndex + word.length >= start) {
             return word
         }
-        currentIndex += word.length + 1 // Учитываем пробел
+        currentIndex += word.length + 1 // Account for space
     }
     return ""
 }
+
+
