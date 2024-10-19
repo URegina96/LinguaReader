@@ -15,7 +15,7 @@ import com.example.linguareader.ui.theme.CustomButton
 fun HomeScreen(
     onContinueReadingClick: () -> Unit,
     onBookListClick: () -> Unit,
-    onAddBookClick: () -> Unit,
+//    onAddBookClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
     Column(
@@ -25,7 +25,7 @@ fun HomeScreen(
     ) {
         CustomButton(text = "Продолжить чтение", onClick = onContinueReadingClick)
         CustomButton(text = "Мои книги", onClick = onBookListClick)
-        CustomButton(text = "Добавить книгу", onClick = onAddBookClick)
+//        CustomButton(text = "Добавить книгу", onClick = onAddBookClick)
         CustomButton(text = "Настройки", onClick = onSettingsClick)
     }
 }

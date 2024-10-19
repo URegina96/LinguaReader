@@ -39,7 +39,7 @@ fun NavigationGraph(navController: NavHostController, modifier: Modifier = Modif
             HomeScreen(
                 onContinueReadingClick = { navController.navigate(Screen.BookReading.createRoute(lastBookId)) },
                 onBookListClick = { navController.navigate(Screen.BookList.route) },
-                onAddBookClick = { navController.navigate(Screen.AddBook.route) },
+//                onAddBookClick = { navController.navigate(Screen.AddBook.route) },
                 onSettingsClick = { navController.navigate(Screen.Settings.route) }
             )
         }
@@ -52,12 +52,12 @@ fun NavigationGraph(navController: NavHostController, modifier: Modifier = Modif
             )
         }
 
-        composable(route = Screen.AddBook.route) {
-            AddBookScreen(
-                onBackClick = { navController.navigateUp() },
-                onOpenPdfClick = { openPdfLauncher.launch("application/pdf") } // Передача функции открытия PDF
-            )
-        }
+//        composable(route = Screen.AddBook.route) {
+//            AddBookScreen(
+//                onBackClick = { navController.navigateUp() },
+//                onOpenPdfClick = { openPdfLauncher.launch("application/pdf") } // Передача функции открытия PDF
+//            )
+//        }
 
         composable(route = Screen.Settings.route) {
             SettingsScreen(onBackClick = { navController.navigateUp() })
