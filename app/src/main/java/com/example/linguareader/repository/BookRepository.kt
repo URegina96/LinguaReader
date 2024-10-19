@@ -4,7 +4,7 @@ import com.example.linguareader.data.model.Book
 
 class BookRepository {
 
-    private val books = listOf(
+    private val books = mutableListOf(
         Book(id = "1", title = "Программирование на Kotlin", content = "Краткое введение в Kotlin."),
         Book(id = "2", title = "Основы Android", content = "Изучите основы разработки Android."),
         Book(id = "3", title = "Flutter для начинающих", content = "Создайте свои первые приложения на Flutter."),
@@ -18,5 +18,8 @@ class BookRepository {
     fun getBooks(): List<Book> {
         return books
     }
-}
 
+    fun addBook(book: Book) {
+        books.add(book) // Добавление новой книги
+    }
+}

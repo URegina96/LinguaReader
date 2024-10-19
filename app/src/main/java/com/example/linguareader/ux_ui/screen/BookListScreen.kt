@@ -26,13 +26,13 @@ fun BookListScreen(books: List<Book>, onBookClick: (Book) -> Unit, onOpenPdfClic
 
         // Кнопка для открытия PDF-файла с устройства пользователя
         Button(onClick = onOpenPdfClick) {
-            Text("Открыть PDF с уст. поль", color = Color.White)
+            Text("Добавить с PDF с уст. поль", color = Color.White)
         }
 
         // Отображение списка книг
         books.forEach { book ->
             Text(
-                text = book.content,
+                text = book.title, // title для отображения названия книги
                 style = CustomTypography.bodyLarge.copy(color = TextPrimaryDark),
                 modifier = Modifier
                     .clickable { onBookClick(book) }

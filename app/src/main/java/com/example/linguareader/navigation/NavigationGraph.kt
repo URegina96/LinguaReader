@@ -1,14 +1,20 @@
 package com.example.linguareader.navigation
 
+import android.content.Context
+import android.net.Uri
+import android.provider.OpenableColumns
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.linguareader.Screen
+import com.example.linguareader.data.model.Book
 import com.example.linguareader.repository.BookRepository
+import com.example.linguareader.utils.PdfUtils
 import com.example.linguareader.ux_ui.screen.*
 
 @Composable
@@ -16,13 +22,15 @@ fun NavigationGraph(navController: NavHostController, modifier: Modifier = Modif
     val bookRepository = BookRepository()
     val lastBookId = "1" // Предполагаем, что книга с id = "1" — последняя прочитанная книга.
 
-    // Локальная переменная для обработки открытия PDF
+    val context = LocalContext.current
+
+    // Создаем launcher в контексте Composable
     val openPdfLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
             uri?.let {
-                val filePath = it.path ?: return@let // Обработка случая, когда путь может быть null
-                navController.navigate(Screen.PdfReader.createRoute(filePath))
+                // Вызов метода для извлечения текста из PDF
+                handlePdfSelected(context, it, bookRepository, navController)
             }
         }
     )
@@ -78,4 +86,44 @@ fun NavigationGraph(navController: NavHostController, modifier: Modifier = Modif
             }
         }
     }
+}
+
+private fun handlePdfSelected(
+    context: Context,
+    uri: Uri,
+    bookRepository: BookRepository,
+    navController: NavHostController
+) {
+    // Извлекаем текст из PDF
+    val extractedText = PdfUtils.extractTextFromPdf(context, uri)
+
+    // Извлекаем название файла из URI
+    val fileName = getFileName(context, uri)
+
+    // Если имя файла не удалось извлечь, используем "Unknown PDF"
+    val bookTitle = fileName ?: "Unknown PDF"
+
+    val newBook = Book(id = "pdf_${System.currentTimeMillis()}", title = bookTitle, content = extractedText)
+    bookRepository.addBook(newBook) // Добавление новой книги
+    navController.navigate(Screen.BookList.route) // Переход на экран списка книг
+}
+
+private fun getFileName(context: Context, uri: Uri): String? {
+    var fileName: String? = null
+
+    // Проверяем, что URI использует контент-провайдер
+    if (uri.scheme == "content") {
+        val cursor = context.contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            if (it.moveToFirst() && nameIndex != -1) {
+                fileName = it.getString(nameIndex)
+            }
+        }
+    } else {
+        // Если URI не содержит контент-провайдера, извлекаем имя файла из пути
+        fileName = uri.lastPathSegment
+    }
+
+    return fileName
 }
