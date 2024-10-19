@@ -17,10 +17,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.linguareader.navigation.NavigationGraph
 import com.example.linguareader.ui.theme.LinguaReaderTheme
 import com.example.linguareader.ux_ui.screen.BookReadingScreen
-
+import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        PDFBoxResourceLoader.init(applicationContext)
         setContent {
             LinguaReaderTheme {
                 val navController = rememberNavController()

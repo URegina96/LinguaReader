@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.provider.inClassPathMode
+
 pluginManagement {
     repositories {
         google {
@@ -16,6 +18,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+//        maven{
+//            url =uri ("https://repo1.maven.org/maven2/com/tom-roush/pdfbox-android/2.0.27.0/")
+//        }
     }
 }
 

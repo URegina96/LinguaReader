@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.linguareader"
-        minSdk = 26
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -64,11 +64,13 @@ dependencies {
     implementation(libs.androidx.room.runtime) // Основная библиотека Room
     kapt(libs.androidx.room.compiler) // Компилятор Room для аннотаций
     implementation(libs.androidx.room.ktx) // KTX версия Room для удобства использования
-    implementation ("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.core:core-ktx:1.13.1")
 
     // PdfRenderer
-    implementation ("androidx.core:core-ktx:1.12.0")
-
+    implementation("androidx.core:core-ktx:1.12.0")
+    // https://github.com/TomRoush/PdfBox-Android
+    implementation("com.tom-roush:pdfbox-android:2.0.27.0")
+  //  implementation("com.gemalto.jp2:jp2-android:1.0.3")
 
     // Тестирование
     testImplementation(libs.junit)  // JUnit для юнит-тестирования

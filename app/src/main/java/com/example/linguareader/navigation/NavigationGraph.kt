@@ -14,7 +14,6 @@ import androidx.navigation.compose.composable
 import com.example.linguareader.Screen
 import com.example.linguareader.data.model.Book
 import com.example.linguareader.repository.BookRepository
-import com.example.linguareader.utils.PdfUtils
 import com.example.linguareader.ux_ui.screen.*
 
 @Composable
@@ -77,13 +76,11 @@ fun NavigationGraph(navController: NavHostController, modifier: Modifier = Modif
         }
 
         // Добавьте новый экран для PDF
-        composable(route = Screen.PdfReader.route + "/{filePath}") { backStackEntry ->
-            val filePath = backStackEntry.arguments?.getString("filePath")
-            if (filePath != null) {
-                PdfReaderScreen(filePath = filePath, onBackClick = { navController.navigateUp() })
-            } else {
-                navController.navigateUp() // Возврат назад, если filePath не найден
-            }
+        composable(route = Screen.PdfReader.route + "/{uri}") { backStackEntry ->
+            val uriString = backStackEntry.arguments?.getString("uri")
+            val uri = Uri.parse(uriString)
+
+            PdfReaderScreen(uri = uri, onBackClick = { navController.navigateUp() })
         }
     }
 }
