@@ -15,6 +15,10 @@ import com.example.linguareader.Screen
 import com.example.linguareader.data.model.Book
 import com.example.linguareader.repository.BookRepository
 import com.example.linguareader.ux_ui.screen.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun NavigationGraph(navController: NavHostController, modifier: Modifier = Modifier) {
@@ -75,7 +79,7 @@ fun NavigationGraph(navController: NavHostController, modifier: Modifier = Modif
             }
         }
 
-        // Добавьте новый экран для PDF
+        // новый экран для PDF
         composable(route = Screen.PdfReader.route + "/{uri}") { backStackEntry ->
             val uriString = backStackEntry.arguments?.getString("uri")
             val uri = Uri.parse(uriString)
@@ -91,18 +95,21 @@ private fun handlePdfSelected(
     bookRepository: BookRepository,
     navController: NavHostController
 ) {
-    // Извлекаем текст из PDF
-    val extractedText = PdfUtils.extractTextFromPdf(context, uri)
+    CoroutineScope(Dispatchers.IO).launch {
+        val extractedText = PdfUtils.extractTextFromPdf(context, uri) { progress ->
+            // Optional: Update the UI with progress information, if needed
+        }
+        val fileName = getFileName(context, uri)
+        val bookTitle = fileName ?: "Unknown PDF"
+        val newBook = Book(id = "pdf_${System.currentTimeMillis()}", title = bookTitle, content = extractedText)
 
-    // Извлекаем название файла из URI
-    val fileName = getFileName(context, uri)
-
-    // Если имя файла не удалось извлечь, используем "Unknown PDF"
-    val bookTitle = fileName ?: "Unknown PDF"
-
-    val newBook = Book(id = "pdf_${System.currentTimeMillis()}", title = bookTitle, content = extractedText)
-    bookRepository.addBook(newBook) // Добавление новой книги
-    navController.navigate(Screen.BookList.route) // Переход на экран списка книг
+        withContext(Dispatchers.Main) {
+            bookRepository.addBook(newBook)
+            navController.navigate(Screen.BookList.route) {
+                popUpTo(Screen.BookList.route) { inclusive = true }
+            }
+        }
+    }
 }
 
 private fun getFileName(context: Context, uri: Uri): String? {

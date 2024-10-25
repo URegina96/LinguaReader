@@ -61,7 +61,8 @@ dependencies {
     implementation(libs.androidx.material3)  // Material Design 3 для Jetpack Compose
     implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
 
-    implementation(libs.androidx.room.runtime) // Основная библиотека Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.runtime.livedata) // Основная библиотека Room
     kapt(libs.androidx.room.compiler) // Компилятор Room для аннотаций
     implementation(libs.androidx.room.ktx) // KTX версия Room для удобства использования
     implementation("androidx.core:core-ktx:1.13.1")
